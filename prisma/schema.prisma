@@ -15,7 +15,10 @@ model User {
   needPasswordChange Boolean @default(false)
   status UserStatus @default(ACTIVE)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updateAt
+  updatedAt DateTime @updatedAt
+  admin   Admin?
+  doctor  Doctor?
+  patient Patient?
   @@map("users")
 }
 
@@ -27,7 +30,8 @@ model Admin {
   contactNumber String
   isDeleted Boolean @default(false)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updateAt
+  updatedAt DateTime @updatedAt
+  user User @relation(fields: [email], references: [email])
   @@map("admins")
 }
 
@@ -44,8 +48,25 @@ model Doctor {
   desecnation String
   specialization String
   isVerified Boolean @default(false)
+  isDeleted Boolean @default(false)
+  user User @relation(fields: [email], references: [email])
   createdAt DateTime @default(now())
-  updatedAt DateTime @updateAt
+  updatedAt DateTime @updatedAt
+}
+
+model Patient {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePicture String?
+  contactNumber String
+  address String
+  gender GENDER
+  isDeleted Boolean @default(false)
+  user User @relation(fields: [email], references: [email])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("patients")
 }
 
 enum UserRole {
