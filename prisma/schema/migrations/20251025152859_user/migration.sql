@@ -36,7 +36,7 @@ CREATE TABLE "admins" (
 );
 
 -- CreateTable
-CREATE TABLE "Doctor" (
+CREATE TABLE "doctors" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -53,7 +53,7 @@ CREATE TABLE "Doctor" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
-    CONSTRAINT "Doctor_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "doctors_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -62,8 +62,8 @@ CREATE TABLE "patients" (
     "name" TEXT NOT NULL,
     "email" TEXT NOT NULL,
     "profilePicture" TEXT,
-    "contactNumber" TEXT NOT NULL,
-    "address" TEXT NOT NULL,
+    "contactNumber" TEXT,
+    "address" TEXT,
     "gender" "GENDER" NOT NULL,
     "isDeleted" BOOLEAN NOT NULL DEFAULT false,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -79,7 +79,7 @@ CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 CREATE UNIQUE INDEX "admins_email_key" ON "admins"("email");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Doctor_email_key" ON "Doctor"("email");
+CREATE UNIQUE INDEX "doctors_email_key" ON "doctors"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "patients_email_key" ON "patients"("email");
@@ -88,7 +88,7 @@ CREATE UNIQUE INDEX "patients_email_key" ON "patients"("email");
 ALTER TABLE "admins" ADD CONSTRAINT "admins_email_fkey" FOREIGN KEY ("email") REFERENCES "users"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Doctor" ADD CONSTRAINT "Doctor_email_fkey" FOREIGN KEY ("email") REFERENCES "users"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "doctors" ADD CONSTRAINT "doctors_email_fkey" FOREIGN KEY ("email") REFERENCES "users"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "patients" ADD CONSTRAINT "patients_email_fkey" FOREIGN KEY ("email") REFERENCES "users"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
