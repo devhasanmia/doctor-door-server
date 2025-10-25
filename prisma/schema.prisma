@@ -7,29 +7,61 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Admin {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      String   @default("admin")
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+  role UserRole @default(PATIENT)
+  needPasswordChange Boolean @default(false)
+  status UserStatus @default(ACTIVE)
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  blogs     Blog[]
+  updatedAt DateTime @updateAt
+  @@map("users")
 }
 
-model Blog {
-  id          Int      @id @default(autoincrement())
-  title       String
-  content     String
-  thumbnail   String?
-  authorId    Int
-  author      Admin    @relation(fields: [authorId], references: [id])
-  category    String?
-  tags        String[]
-  isPublished Boolean  @default(false)
-  views       Int      @default(0)
-  likes       Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+model Admin {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePicture String?
+  contactNumber String
+  isDeleted Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updateAt
+  @@map("admins")
+}
+
+model Doctor {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  profilePicture String?
+  contactNumber String
+  experience Int @default(0)
+  gender GENDER
+  appointmentFee Int
+  currentWorkingPlace String
+  desecnation String
+  specialization String
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updateAt
+}
+
+enum UserRole {
+  ADMIN
+  DOCTOR
+  PATIENT
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  DELETED
+}
+
+enum GENDER {
+  MALE
+  FEMALE
+  OTHER
 }
