@@ -1,32 +1,44 @@
+import { sendImage } from "../../helpers/fileUploder";
 import { prisma } from "../../shared/prisma";
 import { TUser } from "./user.type";
 import bcrypt from "bcryptjs";
 
-const createPatient = async (payload: TUser) => {
-    const hashedPassword = await bcrypt.hash(payload.password, 10);
+const createPatient = async (file: Express.Multer.File | undefined, payload: TUser) => {
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
 
-    const result = await prisma.$transaction(async (tx) => {
-        // Create user
-        await tx.user.create({
-            data: {
-                email: payload.email,
-                password: hashedPassword,
-            },
-        });
+  // Optional Profile Picture Upload
+  let profilePicture: string | null = null;
 
-        // create patient profile
-        return await tx.patient.create({
-            data: {
-                name: payload.name,
-                email: payload.email,
-                gender: payload.gender
-            }
-        })
+  if (file?.path) {
+    const randomString = Math.random().toString(36).substring(2, 7).toUpperCase();
+    const imageName = `${payload.name}-${randomString}`;
+    const { secure_url } = await sendImage(file.path, imageName);
+    profilePicture = secure_url;
+  }
+
+  const result = await prisma.$transaction(async (tx) => {
+    // Create user
+    const user = await tx.user.create({
+      data: {
+        email: payload.email,
+        password: hashedPassword,
+      },
     });
 
-    return result;
+    // Create patient
+    return await tx.patient.create({
+      data: {
+        name: payload.name,
+        email: payload.email,
+        gender: payload.gender,
+        profilePicture: profilePicture,
+      },
+    });
+  });
+
+  return result;
 };
 
 export const UserService = {
-    createPatient,
+  createPatient,
 };
