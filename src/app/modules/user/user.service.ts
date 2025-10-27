@@ -18,7 +18,7 @@ const createPatient = async (file: Express.Multer.File | undefined, payload: TUs
 
   const result = await prisma.$transaction(async (tx) => {
     // Create user
-    const user = await tx.user.create({
+    await tx.user.create({
       data: {
         email: payload.email,
         password: hashedPassword,
@@ -39,6 +39,18 @@ const createPatient = async (file: Express.Multer.File | undefined, payload: TUs
   return result;
 };
 
+const getAllPatients = async (page: number, limit: number) => {
+  // Calculate offset
+  const offset = (page - 1) * limit;
+  // fetch patients with pagination
+  const patients = await prisma.patient.findMany({
+    skip: offset,
+    take: limit
+  })
+  return patients
+}
+
 export const UserService = {
   createPatient,
+  getAllPatients
 };

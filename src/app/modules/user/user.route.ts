@@ -17,6 +17,9 @@ router.post(
     UserController.createPatient
 );
 
+// Get all patients with pagination
+router.get("/patients", UserController.getAllPatients)
+
 
 
 export const UserRoutes = router;
